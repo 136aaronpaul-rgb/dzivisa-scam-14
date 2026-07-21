@@ -12,39 +12,49 @@ db = SQLAlchemy(app)
 class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     message = db.Column(db.Text, nullable=False)
-    number = db.Column(db.String(20))
     platform = db.Column(db.String(20))
-    result = db.Column(db.String(50))
+    result = db.Column(db.String(200))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-# Create table if it doesn't exist
+# Create table
 with app.app_context():
     db.create_all()
 
-# Simple scam checker
-def check_scam(text):
-    scam_words = ['otp', 'won', 'congratulations', 'send money', 'ecocash', 'loan', 'click link', 'agent']
+# Scam checker
+def check_scam(text, platform):
     text_lower = text.lower()
+    scam_words = ['otp', 'won', 'congratulations', 'send money', 'ecocash', 'loan', 'click link', 'agent', 'prize', 'verify']
+    
+    score = 0
     for word in scam_words:
         if word in text_lower:
-            return "⚠️ SCAM DETECTED! Do not reply or send money."
-    return "✅ Looks Safe. But still be careful."
+            score += 1
+    
+    if '+263' in text or '077' in text or '078' in text:
+        score += 1
+
+    if score >= 2:
+        return f"⚠️ SCAM DETECTED on {platform}! Do not reply or send money. Report to 111."
+    elif score == 1:
+        return f"⚠️ SUSPICIOUS on {platform}. Be very careful."
+    else:
+        return f"✅ Looks Safe on {platform}. But still be careful."
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
     result = None
     if request.method == 'POST':
         message = request.form.get('message')
-        result_text = check_scam(message)
+        platform = request.form.get('platform')
+        result_text = check_scam(message, platform)
         
         # Save to database
-        new_report = Report(message=message, result=result_text)
+        new_report = Report(message=message, platform=platform, result=result_text)
         db.session.add(new_report)
         db.session.commit()
-        
         result = result_text
     
     return render_template('index.html', result=result)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

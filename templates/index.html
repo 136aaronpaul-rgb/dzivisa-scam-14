@@ -1,3 +1,4 @@
+cat > templates/index.html << 'EOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,27 +9,41 @@
         body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #d32f2f, #ff6f00); margin: 0; padding: 20px; color: #333; }
         .container { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
         h1 { color: #d32f2f; text-align: center; }
-        textarea { width: 95%; height: 120px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; }
+        textarea, select { width: 95%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; margin-bottom: 10px; }
+        textarea { height: 120px; }
         button { width: 100%; background: #d32f2f; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
         button:hover { background: #b71c1c; }
         .checks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; font-size: 14px; }
         .tips { background: #fff3e0; padding: 15px; border-left: 4px solid #ff6f00; border-radius: 8px; margin-top: 20px; font-size: 12px; line-height: 1.6; }
         .tips h4 { margin: 0 0 10px 0; color: #e65100; font-size: 14px; }
+        .result-box { padding: 15px; border-radius: 8px; margin: 15px 0; text-align: center; font-weight: bold; }
         .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🇿🇼 Dzivisa Scam 14</h1>
-        <p style="text-align:center;">Namatira message ye scam pano / Paste suspected scam message here</p>
+        <p style="text-align:center;">Namatira message ye scam pano / Paste suspected scam message</p>
         
-        <form method="POST">
-            <textarea name="message" placeholder="Example: Congratulations you won $1000... Send OTP now"></textarea><br><br>
+        <form method="POST" action="/">
+            <label><b>Select Platform:</b></label>
+            <select name="platform" required>
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Facebook">Facebook</option>
+                <option value="Instagram">Instagram</option>
+                <option value="TikTok">TikTok</option>
+                <option value="Phone Number">Phone Number/SMS</option>
+            </select>
+            
+            <textarea name="message" placeholder="Example: Congratulations you won $1000... Send OTP now" required></textarea>
+            
             <button type="submit">Scan for Scam</button>
         </form>
 
         {% if result %}
-            <h3 style="color:#d32f2f; text-align:center;">{{ result }}</h3>
+            <div class="result-box" style="background: #ffebee; color: #c62828;">
+                {{ result }}
+            </div>
         {% endif %}
 
         <div class="checks">
@@ -56,3 +71,4 @@
     </div>
 </body>
 </html>
+EOF
